@@ -20,11 +20,44 @@
 </head>
 
 <body id="dashboardMenuBody">
-    <div class="dashboardOverview">
-
-        <div class="Stonks"></div>
-        <div class="Work"></div>
-        <div class="Gamble"></div>
+    <div class="dashboardContainer">
+        <div class="investmentWindow">
+            <ul>
+                <li><input type="checkbox" id="item1"> <label for="item1">Item1</label></li>
+                <li><input type="checkbox" id="item2"> <label for="item2">Item2</label></li>
+                <li><input type="checkbox" id="item3"> <label for="item3">Item3</label></li>
+                <li><input type="checkbox" id="item4"> <label for="item4">Item4</label></li>
+                <li><input type="checkbox" id="item5"> <label for="item5">Item5</label></li>
+            </ul>
+            <button class="btn btn-primary">Buy</button>
+            <button class="btn btn-primary">Sell</button>
+            <button class="btn btn-danger">Close</button>
+        </div>
+        <div class="stocksInventory">
+            <h5>Investment Inventory</h5>
+            <ul>
+                <li>StockItem1</li>
+                <li>StockItem2</li>
+                <li>StockItem3</li>
+            </ul>
+        </div>
+    </div>
+    <div class="dashboardControls">
+        <div class="Stonks">
+            <p>Current Money: $100</p>
+            <button class="btn btn-primary">Investment</button>
+            <p>Current Stocks: Dogecoin</p>
+        </div>
+        <div class="Work">
+            <button class="btn btn-primary">Next Turn</button>
+        </div>
+        <div class="Gamble">
+            <button class="btn btn-primary">Gamble</button>
+            <div class="gambleDetails">
+                <p>Success rate: 100%</p>
+                <p>Winnings Multiplier: 1.5x</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>

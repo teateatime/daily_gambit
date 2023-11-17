@@ -4,33 +4,107 @@
     padding: 0;
 }
 
-.dashboardOverview {
-    width: 600px;
-    height: 300px;
-    background-color: black;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    line-height: 100px; 
+body {
+    font-family: "Montserrat", Avenir, Helvetica, Arial, sans-serif;
+    background: linear-gradient(90deg, hsla(177, 87%, 79%, 1) 0%, hsla(235, 89%, 70%, 1) 100%);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
+.dashboardContainer {
+    display: flex;
+    width: 80%;
+    margin-bottom: 20px;
+}
 
-.Stonks, .Work, .Gamble {
-    border: 2px white;
+.investmentWindow {
+    background-color: rgb(224, 180, 245);
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+}
+
+.investmentWindow ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.investmentWindow li {
+    margin-bottom: 10px;
+}
+
+.investmentWindow input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.stocksInventory {
+    background-color: lightblue;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+}
+
+.investmentWindow,
+.stocksInventory {
+    flex: 1;
+}
+
+.dashboardControls {
+    display: grid;
+    grid-template-columns: auto auto;
+    background-color: black;
+    width: 80%;
+    position: absolute;
+    bottom: 0;
+}
+
+.Stonks,
+.Work,
+.Gamble {
+    background-color: mintcream;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.36);
     padding: 10px;
-    margin: 5px;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+.Stonks,
+.Work {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    height: 90px;
 }
 
 .Stonks {
-
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
-.Work {
-
+  
+.Stonks p {
+    margin: 0;
+    padding: 0;
+    flex: 1;
 }
 
 .Gamble {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
+.Gamble p {
+    display: inline-block;
+    margin: 20px;
 }
