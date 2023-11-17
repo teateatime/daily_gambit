@@ -20,7 +20,10 @@
 </head>
 
 <body id="dashboardMenuBody">
-    <div class="dashboardContainer">
+    <div class="question">
+        Question: What is y where y = 8x + 20 and x = 7?
+    </div>
+    <div class="dashboardContainer" style="display: none;">
         <div class="investmentWindow">
             <ul>
                 <li><input type="checkbox" id="item1"> <label for="item1">Item1</label></li>
@@ -42,11 +45,19 @@
             </ul>
         </div>
     </div>
+    <div class="formContainer">
+        <form action="">
+            <label for="inputNumber">Enter Number:</label>
+            <input type="number" id="inputNumber" name="inputNumber">
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
     <div class="dashboardControls">
         <div class="Stonks">
             <p>Current Money: $100</p>
             <button class="btn btn-primary">Investment</button>
-            <p>Current Stocks: Dogecoin</p>
+            <p>Current Stocks: Coin</p>
         </div>
         <div class="Work">
             <button class="btn btn-primary">Next Turn</button>
@@ -60,4 +71,5 @@
         </div>
     </div>
 </body>
+
 </html>

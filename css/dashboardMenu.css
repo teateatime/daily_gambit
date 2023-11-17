@@ -15,6 +15,17 @@ body {
     align-items: center;
 }
 
+.question {
+    background-color: lightyellow;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .dashboardContainer {
     display: flex;
     width: 80%;
@@ -28,7 +39,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.36);
 }
 
-.investmentWindow ul {
+.investmentWindow ul, .stocksInventory ul {
     list-style-type: none;
     padding: 0;
 }
@@ -53,10 +64,18 @@ body {
     flex: 1;
 }
 
+.formContainer {
+    background-color: aquamarine;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+}
+
 .dashboardControls {
     display: grid;
     grid-template-columns: auto auto;
-    background-color: black;
+    background-color: mintcream;
     width: 80%;
     position: absolute;
     bottom: 0;
