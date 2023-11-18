@@ -20,26 +20,24 @@
 </head>
 
 <body id="mainMenuBody">
+    <header class="header container text-center">
+        <h2>Daily Gambit</h2>
+    </header>
+
+    <div class="goal">
+        <h4>Goal</h4>
+        Welcome to Daily Gambit, a financial and education risk type of game where players have to make
+        informed decisions and answer mathematical questions to help gain over 1 million dollars to complete the game.
+    </div>
     <div class="mainMenuContainer text-center">
         <h2>Main Menu</h2>
-        <a href="dashboardMenu.html" >
-            <button class="btn btn-primary">
-                Start Game
-            </button>
-        </a>
-        <button class="btn btn-danger" id="quitButton">
-            Quit
-        </button>
+        <div class="mainButtonContainer">
+            <a href="dashboardMenu.html" >
+                <button class="btn btn-primary">
+                    Start Game
+                </button>
+            </a>
+        </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const quitButton = document.getElementById('quitButton');
-
-            quitButton.addEventListener('click', function () {
-                // Close the current tab or window
-                window.close();
-            });
-        });
-    </script>
 </body>
 </html>

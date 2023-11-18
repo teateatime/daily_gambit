@@ -104,18 +104,27 @@ document.addEventListener('DOMContentLoaded', function () {
             currentMoney += 50;
             moneyElement.textContent = `Current Money: $${currentMoney}`;
 
-            resultDiv.textContent = 'Correct!';
+            resultDiv.textContent = 'Correct! Congratulations, you reached 1 million dollars!';
             resultDiv.style.display = 'block';
+
+            // Create a quit button
+            const quitButton = document.createElement('button');
+            quitButton.className = 'btn btn-danger';
+            quitButton.textContent = 'Quit';
+
+            // Event listener for the Quit button
+            quitButton.addEventListener('click', function () {
+                window.location.href = 'index.html';
+            });
+
+            // Append quit button to the resultDiv
+            resultDiv.appendChild(quitButton);
 
             questionDiv.style.display = 'none';
             formContainer.style.display = 'none';
             header.style.display = 'block';
-
-            // Hide question div and input form after 3 seconds
-            setTimeout(function () {
-                resultDiv.style.display = 'none';
-            }, 3000);
         } else {
+            currentMoney = 0;
             resultDiv.textContent = 'Incorrect. Try again!';
             resultDiv.style.display = 'block';
 
@@ -123,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 resultDiv.style.display = 'none';
             }, 3000);
 
+            moneyElement.textContent = `Current Money: $${currentMoney}`;
             questionDiv.style.display = 'none';
             formContainer.style.display = 'none';
             header.style.display = 'block';
