@@ -27,9 +27,19 @@
                 Start Game
             </button>
         </a>
-        <button class="btn btn-danger">
+        <button class="btn btn-danger" id="quitButton">
             Quit
         </button>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quitButton = document.getElementById('quitButton');
+
+            quitButton.addEventListener('click', function () {
+                // Close the current tab or window
+                window.close();
+            });
+        });
+    </script>
 </body>
 </html>
