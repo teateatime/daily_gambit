@@ -20,11 +20,15 @@
 </head>
 
 <body id="dashboardMenuBody">
-    <div class="question">
+    <header class="header container text-center">
+        <h2>Daily Gambit</h2>
+    </header>
+    <div class="question" style="display: none">
         Question: What is y where y = 8x + 20 and x = 7?
     </div>
-    <div class="dashboardContainer" style="display: block;">
+    <div class="dashboardContainer" style="display: none;">
         <div class="investmentWindow">
+            <h5>Investment Shop</h5>
             <ul>
                 <li><input type="checkbox" id="item1"> <label for="item1">Item1</label></li>
                 <li><input type="checkbox" id="item2"> <label for="item2">Item2</label></li>
@@ -32,16 +36,18 @@
                 <li><input type="checkbox" id="item4"> <label for="item4">Item4</label></li>
                 <li><input type="checkbox" id="item5"> <label for="item5">Item5</label></li>
             </ul>
-            <button class="btn btn-primary">Buy</button>
-            <button class="btn btn-primary">Sell</button>
-            <button class="btn btn-danger">Close</button>
+            <div class="investButtonContainer">
+                <button class="btn btn-primary">Buy</button>
+                <button class="btn btn-primary">Sell</button>
+                <button class="close btn btn-danger">Close</button>
+            </div>
         </div>
         <div class="stocksInventory">
             <h5>Investment Inventory</h5>
             <ul>
-                <li>StockItem1</li>
-                <li>StockItem2</li>
-                <li>StockItem3</li>
+                <li><input type="checkbox" id="stockItem1"> <label for="item1">StockItem1</label></li>
+                <li><input type="checkbox" id="stockItem2"> <label for="item2">StockItem2</label></li>
+                <li><input type="checkbox" id="stockItem3"> <label for="item3">StockItem3</label></li>
             </ul>
         </div>
     </div>
@@ -53,6 +59,7 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+    <div class="result" style="display: none;">Correct!</div>
     <div class="dashboardControls">
         <div class="Stonks">
             <p>Current Money: $100</p>
@@ -60,16 +67,16 @@
             <p>Current Stocks: Coin</p>
         </div>
         <div class="Work">
-            <button class="btn btn-primary">Next Turn</button>
+            <button class="btn btn-primary">Start Question</button>
         </div>
         <div class="Gamble">
             <button class="btn btn-primary">Gamble</button>
             <div class="gambleDetails">
-                <p>Success rate: 100%</p>
+                <p>Success rate: 90%</p>
                 <p>Winnings Multiplier: 1.5x</p>
             </div>
         </div>
     </div>
+    <script src="js/script.js"></script>
 </body>
-
 </html>
