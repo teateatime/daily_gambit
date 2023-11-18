@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update values
         currentMoney = 150;
         successRate = 80;
-        winningsMultiplier = 2.0;
 
         // Update elements
         moneyElement.textContent = `Current Money: $${currentMoney}`;
