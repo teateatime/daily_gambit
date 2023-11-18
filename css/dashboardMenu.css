@@ -148,7 +148,7 @@ header {
     margin: 20px;
 }
 
-.result {
+.result, .diceNum {
     background-color: #4CAF50;
     color: white;
     padding: 10px;

@@ -72,13 +72,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const questionDiv = document.querySelector('.question');
     const formContainer = document.querySelector('.formContainer');
     const header = document.querySelector('.header');
+    const generatedNumberDiv = document.querySelector('.diceNum');
 
     // Event listener for Start Question button
     startQuestionButton.addEventListener('click', function () {
-        // Show the question div and input form
-        header.style.display = 'none';
-        questionDiv.style.display = 'block';
-        formContainer.style.display = 'block';
+        // Generate a random number between 1 and 6
+        const randomNumber = Math.floor(Math.random() * 6) + 1;
+
+        // Display the generated number temporarily
+        generatedNumberDiv.style.display = "block";
+        generatedNumberDiv.textContent = `Generated Number: ${randomNumber}`;
+
+        setTimeout(function () {
+            generatedNumberDiv.style.display = "none";
+            header.style.display = 'none';
+            questionDiv.style.display = 'block';
+            formContainer.style.display = 'block';
+        }, 1500);
     });
 
     const submitButton = document.querySelector('.formContainer button');
