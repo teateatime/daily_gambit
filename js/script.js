@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
             header.style.display = 'block';
         } else {
             currentMoney = 0;
-            resultDiv.textContent = 'Incorrect. Try again!';
+            resultDiv.textContent = 'Incorrect. Try again! The Answer is: 76';
             resultDiv.style.display = 'block';
 
             setTimeout(function () {
