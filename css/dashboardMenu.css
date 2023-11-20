@@ -4,6 +4,7 @@
     padding: 0;
 }
 
+/* All credit for the image can be sourced to here: https://www.freepik.com/free-vector/future-metropolis-downtown-modern-city-business-center-cartoon-background_4758645.htm#page=2&query=game%20city&position=46&from_view=keyword&track=ais&uuid=45e66db0-d905-4640-a224-6fc923519f80 */
 body {
     font-family: "Montserrat", Avenir, Helvetica, Arial, sans-serif;
     background: url(../Img/1466.jpg) no-repeat center center fixed, linear-gradient(90deg, hsla(177, 87%, 79%, 1) 0%, hsla(235, 89%, 70%, 1) 100%);
