@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sellButton.addEventListener('click', function () {
                 let profits = [];
                 for (let i = 0; i < addedValues.length; i++) {
-                    let profit = storeBuy[i] - tempValue[i];
+                    let profit =  tempValue[i] - storeBuy[i];
                     profits.push(profit);
                 }
         
