@@ -72,16 +72,6 @@ document.addEventListener('DOMContentLoaded', function () {
         hideDashboard();
     });
 
-    buyButton.addEventListener('click', function () {
-        hideDashboard();
-        showNotification('Purchased!');
-    });
-
-    sellButton.addEventListener('click', function () {
-        hideDashboard();
-        showNotification('Sold!');
-    });
-
     startQuestionButton.addEventListener('click', function () {
         startQuestion();
     });
@@ -263,4 +253,77 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return false; // Player hasn't won yet
     }
-});
+
+        const xValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+        const initialData = [
+            [1],
+            [2],
+            [3],
+            [4],
+            [5]
+        ];
+        const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+        const itemLabels = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: initialData.map((data, index) => ({
+                    data: data,
+                    borderColor: colors[index],
+                    fill: false,
+                    label: itemLabels[index]
+                }))
+            },
+            options: {
+                legend: {
+                    display: true
+                }
+            }
+        });
+        let subArray = 0;
+        let storeBuy = []; // Store the purchased values
+        let tempValue = [];
+        const addDataButton = document.getElementById('addDataButton');
+        let currentIndex = xValues.length - 1;
+        
+        addDataButton.addEventListener('click', function () {
+            currentIndex++;
+        
+            const addedValues = [];
+            myChart.data.datasets.forEach((dataset, index) => {
+                const newValue = Math.floor(Math.random() * 10);
+                dataset.data.push(newValue);
+                addedValues.push(newValue);
+                tempValue.push(newValue)
+            });
+            // Modify tempValue to isolate the latest value in each sub-array
+            const lastValues = [];
+            for (let i = 0; i < initialData.length; i++) {
+                lastValues.push(tempValue[tempValue.length - (i + 1)]);
+            }
+            tempValue = lastValues.reverse();
+        
+            myChart.data.labels.push(currentIndex * 10);
+            myChart.update();
+        
+            buyButton.addEventListener('click', function () {
+                showNotification('Purchased!');
+                storeBuy = tempValue.slice(); // Store a copy of tempValue
+                console.log('Value bought:', storeBuy); // Print
+            });
+        
+            sellButton.addEventListener('click', function () {
+                let profits = [];
+                for (let i = 0; i < addedValues.length; i++) {
+                    let profit = storeBuy[i] - tempValue[i];
+                    profits.push(profit);
+                }
+        
+                console.log('Profits:', profits); // Print
+                showNotification('Sold!');
+            });
+            subArray++;
+        });
+    });
