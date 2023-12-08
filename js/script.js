@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-    let currentMoney = 100;
-    let successRate = 90;
+    let currentMoney = 10000;
+    let successRate = 50;
     let winningsMultiplier = 1.5;
     let fileName;
     let questions;
     let selectedQuestion;
     let bonusStatus;
+    let turnCounter = 1;
+    let questionActive = false;
 
     const moneyElement = document.querySelector('.Stonks p');
     const gambleButton = document.querySelector('.Gamble button');
@@ -31,8 +33,42 @@ document.addEventListener('DOMContentLoaded', function () {
     successRateElement.textContent = `Success rate: ${successRate}%`;
     winningsMultiplierElement.textContent = `Winnings Multiplier: ${winningsMultiplier}x`;
 
-    function updateGambleValues() {
-        if (currentMoney <= 0) {
+    const xValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const initialData = [
+        [1],
+        [2],
+        [3],
+        [4],
+        [5]
+    ];
+    const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+    const itemLabels = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xValues,
+            datasets: initialData.map((data, index) => ({
+                data: data,
+                borderColor: colors[index],
+                fill: false,
+                label: itemLabels[index]
+            }))
+        },
+        options: {
+            legend: {
+                display: true
+            }
+        }
+    });
+    let subArray = 0;
+    let storeBuy = []; // Store the purchased values
+    let tempValue = [];
+    let currentIndex = xValues.length - 1;
+
+    function updateGambleValues(wagerAmount) {
+        console.log(wagerAmount);
+        if (wagerAmount <= 0) {
             showNotification("You don't have enough money to gamble!");
             return;
         }
@@ -40,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const gambleResult = Math.random() * 100; // Simulate a random result between 0 and 100
         if (gambleResult <= successRate) {
             // Gamble successful, make a profit based on the winnings multiplier
-            const profit = currentMoney * winningsMultiplier;
+            const profit = wagerAmount * winningsMultiplier;
             currentMoney += profit;
             showNotification(`Gamble successful! You made a profit of $${profit}`);
             
@@ -48,8 +84,9 @@ document.addEventListener('DOMContentLoaded', function () {
             successRate = Math.max(successRate - 10, 10);
         } else {
             // Gamble unsuccessful, lose the money wagered
-            currentMoney -= currentMoney;
-            showNotification(`Gamble unsuccessful! You lost $${currentMoney}`);
+            currentMoney -= wagerAmount;
+            showNotification(`Gamble unsuccessful! You lost $${wagerAmount}`);
+            successRate = 50;
         }
     
         moneyElement.textContent = `Current Money: $${currentMoney}`;
@@ -61,9 +98,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     gambleButton.addEventListener('click', function () {
-        updateGambleValues();
+        if (!questionActive) {
+            // Show the wager form
+            document.querySelector('.wager-form').style.display = 'block';
+        }
     });
 
+    document.getElementById('wager-close').addEventListener('click', function () {
+        document.querySelector('.wager-form').style.display = 'none';
+    });
+
+    document.getElementById('wager-submit').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+    
+        // Get the wager amount from the form
+        wagerAmount = parseFloat(document.getElementById('wagerAmount').value);
+    
+        // Validate if the wager amount is a positive number
+        if (isNaN(wagerAmount) || wagerAmount <= 0 || wagerAmount === null || wagerAmount === " ") {
+            showNotification("Invalid wager amount. Please enter a positive number.");
+            return;
+        }
+    
+        // Ensure the user has enough money to place the wager
+        if (wagerAmount > currentMoney) {
+            showNotification("You don't have enough money for this wager!");
+            return;
+        }
+    
+        // Proceed with the gamble
+        updateGambleValues(wagerAmount);
+    
+        // Hide the wager form after submission
+        document.querySelector('.wager-form').style.display = 'none';
+    });
+    
     investmentButton.addEventListener('click', function () {
         toggleDashboardVisibility();
     });
@@ -73,12 +142,56 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     startQuestionButton.addEventListener('click', function () {
-        startQuestion();
+
+        currentIndex++;
+        
+        const addedValues = [];
+        myChart.data.datasets.forEach((dataset, index) => {
+            const newValue = Math.floor(Math.random() * 10);
+            dataset.data.push(newValue);
+            addedValues.push(newValue);
+            tempValue.push(newValue)
+        });
+        // Modify tempValue to isolate the latest value in each sub-array
+        const lastValues = [];
+        for (let i = 0; i < initialData.length; i++) {
+            lastValues.push(tempValue[tempValue.length - (i + 1)]);
+        }
+        tempValue = lastValues.reverse();
+    
+        myChart.data.labels.push(currentIndex * 10);
+        myChart.update();
+    
+        buyButton.addEventListener('click', function () {
+            showNotification('Purchased!');
+            storeBuy = tempValue.slice(); // Store a copy of tempValue
+            console.log('Value bought:', storeBuy); // Print
+        });
+    
+        sellButton.addEventListener('click', function () {
+            let profits = [];
+            for (let i = 0; i < addedValues.length; i++) {
+                let profit =  tempValue[i] - storeBuy[i];
+                profits.push(profit);
+            }
+    
+            console.log('Profits:', profits); // Print
+            showNotification('Sold!');
+        });
+        subArray++;
+
+        if (!questionActive) {
+            questionActive = true; // Set to true when a question is started
+            startQuestion();
+        }
     });
 
     submitButton.addEventListener('click', function (event) {
         event.preventDefault();
-        checkAnswer();
+        if (questionActive) {
+            checkAnswer();
+            questionActive = false; // Set to false when the user submits an answer
+        }
     });
 
     function toggleDashboardVisibility() {
@@ -122,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function startQuestion() {
+        turnCounter++;
         randomEvents();
         const randomNumber = Math.floor(Math.random() * 6) + 1;
 
@@ -191,13 +305,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const correctAnswerFromJson = answers[answerIndex];
     
                 if (correctAnswer === correctAnswerFromJson) {
-                    currentMoney += 1000;
+                    currentMoney += 10000;
     
                     // Check if currentMoney is negative, set it to 0
                     currentMoney = Math.max(currentMoney, 0);
 
                     if (bonusStatus == true) {
-                        currentMoney += 1000;
+                        currentMoney += 10000;
                         bonusStatus = false;
                     }
     
@@ -207,9 +321,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         return; // Player won
                     }
     
-                    startQuestion(); // Move to the next question
+                    questionDiv.style.display = 'none';
+                    formContainer.style.display = 'none';
+                    header.style.display = 'block';
+
+                    showNotification('Nice Job! You got the correct answer!');
+
                 } else {
-                    currentMoney -= 1000;
+                    if (bonusStatus == true) {
+                        bonusStatus = false;
+                    }
+                    currentMoney -= 10000;
     
                     // Check if currentMoney is negative, set it to 0
                     currentMoney = Math.max(currentMoney, 0);
@@ -232,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function playerWon() {
         if (currentMoney >= 1000000) {
-            resultDiv.textContent = 'Congratulations! You reached 1 million dollars and won the game!';
+            resultDiv.textContent = `Congratulations! You reached 1 million dollars and won the game! Amount of Turns to Win: ${turnCounter}`;
             resultDiv.style.display = 'block';
 
             const quitButton = document.createElement('button');
@@ -253,77 +375,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return false; // Player hasn't won yet
     }
-
-        const xValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-        const initialData = [
-            [1],
-            [2],
-            [3],
-            [4],
-            [5]
-        ];
-        const colors = ['red', 'blue', 'green', 'orange', 'purple'];
-        const itemLabels = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: xValues,
-                datasets: initialData.map((data, index) => ({
-                    data: data,
-                    borderColor: colors[index],
-                    fill: false,
-                    label: itemLabels[index]
-                }))
-            },
-            options: {
-                legend: {
-                    display: true
-                }
-            }
-        });
-        let subArray = 0;
-        let storeBuy = []; // Store the purchased values
-        let tempValue = [];
-        const addDataButton = document.getElementById('addDataButton');
-        let currentIndex = xValues.length - 1;
-        
-        addDataButton.addEventListener('click', function () {
-            currentIndex++;
-        
-            const addedValues = [];
-            myChart.data.datasets.forEach((dataset, index) => {
-                const newValue = Math.floor(Math.random() * 10);
-                dataset.data.push(newValue);
-                addedValues.push(newValue);
-                tempValue.push(newValue)
-            });
-            // Modify tempValue to isolate the latest value in each sub-array
-            const lastValues = [];
-            for (let i = 0; i < initialData.length; i++) {
-                lastValues.push(tempValue[tempValue.length - (i + 1)]);
-            }
-            tempValue = lastValues.reverse();
-        
-            myChart.data.labels.push(currentIndex * 10);
-            myChart.update();
-        
-            buyButton.addEventListener('click', function () {
-                showNotification('Purchased!');
-                storeBuy = tempValue.slice(); // Store a copy of tempValue
-                console.log('Value bought:', storeBuy); // Print
-            });
-        
-            sellButton.addEventListener('click', function () {
-                let profits = [];
-                for (let i = 0; i < addedValues.length; i++) {
-                    let profit =  tempValue[i] - storeBuy[i];
-                    profits.push(profit);
-                }
-        
-                console.log('Profits:', profits); // Print
-                showNotification('Sold!');
-            });
-            subArray++;
-        });
-    });
+});

@@ -53,6 +53,11 @@ header {
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.36);
+    z-index: 999;
+}
+
+.stocksInventory {
+    z-index: 999;
 }
 
 .investmentWindow ul, .stocksInventory ul {
@@ -85,7 +90,7 @@ header {
     justify-content: space-evenly;
 }
 
-.formContainer {
+.formContainer, .wager-form {
     background-color: aquamarine;
     padding: 20px;
     border-radius: 5px;
@@ -118,12 +123,6 @@ header {
     grid-column-start: 1;
     grid-column-end: 4;
     height: 90px;
-}
-
-.Stonks {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
   
 .Stonks p {
@@ -171,4 +170,15 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.chart {
+    height: calc(100vh - 170px);
+    max-height: 500px;
+    width: 100%; /* Make the chart container responsive */
+}
+
+canvas {
+    max-width: 100%; /* Make the canvas responsive */
+    height: auto;
 }
