@@ -6,8 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let questions;
     let selectedQuestion;
     let bonusStatus;
-    let turnCounter = 1;
+    let turnCounter = 0;
     let questionActive = false;
+    let dashboardActive = false;
+    let hasBoughtOnCurrentTurn = false;
+    let stockItemCounts = {};
 
     const moneyElement = document.querySelector('.Stonks p');
     const gambleButton = document.querySelector('.Gamble button');
@@ -28,12 +31,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitButton = document.querySelector('.formContainer button');
     const inputNumber = document.querySelector('#inputNumber');
     const resultDiv = document.querySelector('.result');
+    const stocksInventory = document.querySelector('.stocksInventory ul');
 
     moneyElement.textContent = `Current Money: $${currentMoney}`;
     successRateElement.textContent = `Success rate: ${successRate}%`;
     winningsMultiplierElement.textContent = `Winnings Multiplier: ${winningsMultiplier}x`;
 
-    const xValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const xValues = generateXValues(turnCounter); // Initial x-values
     const initialData = [
         [1],
         [2],
@@ -44,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const colors = ['red', 'blue', 'green', 'orange', 'purple'];
     const itemLabels = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
     const ctx = document.getElementById('myChart').getContext('2d');
+
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -56,15 +61,44 @@ document.addEventListener('DOMContentLoaded', function () {
             }))
         },
         options: {
-            legend: {
-                display: true
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Number of Turns'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Cost ($ in thousands)'
+                    }
+                }
             }
         }
     });
+
     let subArray = 0;
     let storeBuy = []; // Store the purchased values
     let tempValue = [];
+    let purchaseHistory = []; // Store the history of purchases and sales
     let currentIndex = xValues.length - 1;
+
+    function updateChartData() {
+        const xValues = generateXValues(turnCounter);
+        myChart.data.labels = xValues;
+        myChart.update();
+    }
+
+    function generateXValues(turnCounter) {
+        const xValues = Array.from({ length: turnCounter + 1 }, (_, index) => index);
+        console.log(xValues)
+        return xValues;
+    }
 
     function updateGambleValues(wagerAmount) {
         console.log(wagerAmount);
@@ -98,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     gambleButton.addEventListener('click', function () {
-        if (!questionActive) {
+        if (!questionActive && !dashboardActive) {
             // Show the wager form
             document.querySelector('.wager-form').style.display = 'block';
         }
@@ -134,55 +168,45 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     investmentButton.addEventListener('click', function () {
-        toggleDashboardVisibility();
+        if (!questionActive) {
+            toggleDashboardVisibility();
+        }
     });
 
     closeButton.addEventListener('click', function () {
         hideDashboard();
+        dashboardActive = false; // Set the dashboard as inactive when closed
     });
 
     startQuestionButton.addEventListener('click', function () {
 
-        currentIndex++;
-        
-        const addedValues = [];
-        myChart.data.datasets.forEach((dataset, index) => {
-            const newValue = Math.floor(Math.random() * 10);
-            dataset.data.push(newValue);
-            addedValues.push(newValue);
-            tempValue.push(newValue)
-        });
-        // Modify tempValue to isolate the latest value in each sub-array
-        const lastValues = [];
-        for (let i = 0; i < initialData.length; i++) {
-            lastValues.push(tempValue[tempValue.length - (i + 1)]);
-        }
-        tempValue = lastValues.reverse();
-    
-        myChart.data.labels.push(currentIndex * 10);
-        myChart.update();
-    
-        buyButton.addEventListener('click', function () {
-            showNotification('Purchased!');
-            storeBuy = tempValue.slice(); // Store a copy of tempValue
-            console.log('Value bought:', storeBuy); // Print
-        });
-    
-        sellButton.addEventListener('click', function () {
-            let profits = [];
-            for (let i = 0; i < addedValues.length; i++) {
-                let profit =  tempValue[i] - storeBuy[i];
-                profits.push(profit);
+        if (!questionActive && !dashboardActive) {
+            currentIndex++;
+            
+            const addedValues = [];
+            myChart.data.datasets.forEach((dataset, index) => {
+                const newValue = Math.floor(Math.random() * 10);
+                dataset.data.push(newValue);
+                addedValues.push(newValue);
+                tempValue.push(newValue)
+            });
+            // Modify tempValue to isolate the latest value in each sub-array
+            const lastValues = [];
+            for (let i = 0; i < initialData.length; i++) {
+                lastValues.push(tempValue[tempValue.length - (i + 1)]);
             }
-    
-            console.log('Profits:', profits); // Print
-            showNotification('Sold!');
-        });
-        subArray++;
+            tempValue = lastValues.reverse();
+        
+            myChart.data.labels.push(currentIndex * 10);
+            myChart.update();
 
-        if (!questionActive) {
-            questionActive = true; // Set to true when a question is started
-            startQuestion();
+            subArray++;
+
+            if (!questionActive) {
+                questionActive = true; // Set to true when a question is started
+                startQuestion();
+                updateChartData();
+            }
         }
     });
 
@@ -194,11 +218,104 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    buyButton.addEventListener('click', function () {
+        if (turnCounter === 0) {
+            showNotification("Stocks are empty!");
+            return;
+        }
+    
+        // Get the total value to be bought in thousands
+        const totalValueToBuy = tempValue.reduce((sum, value) => sum + value, 0) * 100;
+    
+        // Check if the user has enough money to buy
+        if (totalValueToBuy > currentMoney) {
+            showNotification("You don't have enough money to buy!");
+            return;
+        }
+    
+        // Deduct the amount from current money
+        currentMoney -= totalValueToBuy;
+        moneyElement.textContent = `Current Money: $${currentMoney}`;
+    
+        // Store a copy of tempValue, the turn number, and the total value in the storeBuy array
+        storeBuy.push({
+            turn: turnCounter,
+            values: [...tempValue.map(value => value * 100)],
+            totalValue: totalValueToBuy
+        });
+    
+        // Update the investment inventory screen
+        updateStocksInventory();
+    
+        showNotification('Purchased!');
+    
+        hasBoughtOnCurrentTurn = true;
+    });
+    
+    sellButton.addEventListener('click', function () {
+        // Check if the user has items to sell
+        if (storeBuy.length === 0) {
+            showNotification("You don't have anything to sell!");
+            return;
+        }
+    
+        let totalEarnings = 0;
+    
+        // Loop through storeBuy and calculate total earnings based on the current stock prices
+        for (const purchase of storeBuy) {
+            const currentStockPrices = tempValue.map(value => value * 100);
+            const currentValue = purchase.values.reduce((sum, value, index) => {
+                const currentPrice = currentStockPrices[index];
+                return sum + currentPrice;
+            }, 0);
+            totalEarnings += currentValue;
+        }
+    
+        // Subtract the total earnings from current money
+        currentMoney += totalEarnings;
+        moneyElement.textContent = `Current Money: $${currentMoney}`;
+    
+        showNotification(`Sold! Gain: $${totalEarnings}`);
+    
+        // Clear the storeBuy array
+        storeBuy = [];
+    
+        // Reset the flag since the user has sold on this turn
+        hasBoughtOnCurrentTurn = false;
+    
+        // Clear and update the investment inventory screen
+        updateStocksInventory();
+    });
+    
+    function updateStocksInventory() {
+        // Clear the content of the investment inventory screen
+        stocksInventory.innerHTML = '';
+    
+        // Populate the stocks inventory with the bought items and their counts
+        const stockItemCounts = {}; // Keep track of the count of each stock item
+        for (const purchase of storeBuy) {
+            for (let i = 0; i < purchase.values.length; i++) {
+                const itemName = `Item ${i + 1}`;
+                stockItemCounts[itemName] = (stockItemCounts[itemName] || 0) + 1;
+            }
+        }
+    
+        // Append the items and counts to the investment inventory screen
+        for (const itemName in stockItemCounts) {
+            const count = stockItemCounts[itemName];
+            const listItem = document.createElement('li');
+            listItem.textContent = `${itemName} * ${count}`;
+            stocksInventory.appendChild(listItem);
+        }
+    }
+
     function toggleDashboardVisibility() {
         if (dashboardContainer.style.display === 'none' || dashboardContainer.style.display === '') {
             dashboardContainer.style.display = 'flex';
+            dashboardActive = true; // Set the dashboard as active
         } else {
             dashboardContainer.style.display = 'none';
+            dashboardActive = false; // Set the dashboard as inactive
         }
     }
 
@@ -221,17 +338,17 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("randomEvents Called")
         const eventChance = Math.random() * 100; // Simulate a random result between 0 and 100
 
-        if (eventChance <= 5) {
-            // 5% chance - Negative effect: Player loses all money
+        if (eventChance <= 1) {
+            // 1% chance - Negative effect: Player loses all money
             currentMoney = 0;
             moneyElement.textContent = `Current Money: $${currentMoney}`;
             showNotification('Random event: You lost all your money!');
-        } else if (eventChance <= 10) {
-            // 5% chance - Positive effect: Double profits for the next correct answer
+        } else if (eventChance <= 5) {
+            // 4% chance - Positive effect: Double profits for the next correct answer
             bonusStatus = true;
             showNotification('Random event: Double profits for the next correct answer!');
         }
-        // For the other 90%, nothing happens
+        // For the other 95%, nothing happens
     }
 
     function startQuestion() {
