@@ -129,16 +129,23 @@ document.addEventListener('DOMContentLoaded', function () {
         if((playerWon())) {
             return;
         }
+
+        startQuestionButton.disabled = false;
+        investmentButton.disabled = false;
     }
 
     gambleButton.addEventListener('click', function () {
         if (!questionActive && !dashboardActive) {
             // Show the wager form
+            startQuestionButton.disabled = true;
+            investmentButton.disabled = true;
             document.querySelector('.wager-form').style.display = 'block';
         }
     });
 
     document.getElementById('wager-close').addEventListener('click', function () {
+        startQuestionButton.disabled = false;
+        investmentButton.disabled = false;
         document.querySelector('.wager-form').style.display = 'none';
     });
 
@@ -168,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     investmentButton.addEventListener('click', function () {
-        if (!questionActive) {
+        if (!questionActive && !dashboardActive && !gambleButton.disabled) {
             toggleDashboardVisibility();
         }
     });
@@ -179,33 +186,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     startQuestionButton.addEventListener('click', function () {
-
         if (!questionActive && !dashboardActive) {
-            currentIndex++;
-            
-            const addedValues = [];
-            myChart.data.datasets.forEach((dataset, index) => {
-                const newValue = Math.floor(Math.random() * 10);
-                dataset.data.push(newValue);
-                addedValues.push(newValue);
-                tempValue.push(newValue)
-            });
-            // Modify tempValue to isolate the latest value in each sub-array
-            const lastValues = [];
-            for (let i = 0; i < initialData.length; i++) {
-                lastValues.push(tempValue[tempValue.length - (i + 1)]);
-            }
-            tempValue = lastValues.reverse();
-        
-            myChart.data.labels.push(currentIndex * 10);
-            myChart.update();
-
-            subArray++;
-
-            if (!questionActive) {
-                questionActive = true; // Set to true when a question is started
-                startQuestion();
-                updateChartData();
+            // Check if the Gamble button is active
+            if (!gambleButton.disabled) {
+                currentIndex++;
+    
+                const addedValues = [];
+                myChart.data.datasets.forEach((dataset, index) => {
+                    const newValue = Math.floor(Math.random() * 10);
+                    dataset.data.push(newValue);
+                    addedValues.push(newValue);
+                    tempValue.push(newValue)
+                });
+                // Modify tempValue to isolate the latest value in each sub-array
+                const lastValues = [];
+                for (let i = 0; i < initialData.length; i++) {
+                    lastValues.push(tempValue[tempValue.length - (i + 1)]);
+                }
+                tempValue = lastValues.reverse();
+    
+                myChart.data.labels.push(currentIndex * 10);
+                myChart.update();
+    
+                subArray++;
+    
+                if (!questionActive) {
+                    questionActive = true; // Set to true when a question is started
+                    startQuestion();
+                    updateChartData();
+                }
             }
         }
     });
